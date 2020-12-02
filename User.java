@@ -7,11 +7,20 @@ public class User implements Comparable<User>
     private int numberOfBooksHeld;
     private final int maxNumberOfBooks = 3;
 
-    User(String firstName, String lastName, int numberOfBooksHeld) 
+    User(String firstName, String lastName) 
     {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.numberOfBooksHeld = numberOfBooksHeld;
+        this.numberOfBooksHeld = 0;
+    }
+
+    User(String fullName) 
+    {
+        int nameSeperationPoint = fullName.indexOf(" ");
+        this.firstName = fullName.substring(0, nameSeperationPoint);
+        this.lastName = fullName.substring(nameSeperationPoint + 1);
+        
+        this.numberOfBooksHeld = 0;
     }
 
     public String getFirstName()
@@ -54,6 +63,16 @@ public class User implements Comparable<User>
         this.numberOfBooksHeld = numberOfBooksHeld;
     }
 
+    public void addBook()
+    {
+        this.numberOfBooksHeld += 1;
+    }
+
+    public void returnBook()
+    {
+        this.numberOfBooksHeld -= 1;
+    }
+
     @Override
     public String toString() //change
     {
@@ -75,10 +94,11 @@ public class User implements Comparable<User>
     {
         p.print(initial() + ". " + lastName);
     }
+
         
     public boolean equals(User otherUser)
     {
-        return (firstName.equalsIgnoreCase(otherUser.firstName) && lastName.equalsIgnoreCase(otherUser.lastName));
+        return (this.firstName.equalsIgnoreCase(otherUser.firstName) && this.lastName.equalsIgnoreCase(otherUser.lastName));
     }
 
     public int compareTo(User u)
@@ -86,6 +106,16 @@ public class User implements Comparable<User>
         int lnCmp = lastName.compareTo(u.lastName);
         if (lnCmp!=0) return lnCmp;
         else return firstName.compareTo(u.firstName);
+    }
+
+    public static void main(String[] args)
+    {
+        User test = new User("Elliot Hogg");
+        User test2 = new User("Elliot Hogg");
+        User test3 = new User("Daniel Hogg");
+
+
+        System.out.println(test.equals(test3));
     }
 
 }

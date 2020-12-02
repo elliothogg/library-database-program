@@ -6,12 +6,33 @@ public class Book implements Comparable<Book>
     private final String title, authorFirstName, authorLastName;
     private User borrowedBy;
 
-    Book(String title, String authorFirstName , String authorLastName, User borrowedBy) //Maybe store author name as string[2]??
+    Book(String title, String authorfirstName, String authorLastName)
     {
         this.title = title;
-        this.authorFirstName = authorFirstName;
+        this.authorFirstName = authorfirstName;
         this.authorLastName = authorLastName;
+        this.borrowedBy = null;
+    }
+
+    Book(String title, String authorFullName)
+    {
+        this.title = title;
+
+        int nameSeperationPoint = authorFullName.lastIndexOf(" ");
+        this.authorFirstName = authorFullName.substring(0, nameSeperationPoint);
+        this.authorLastName = authorFullName.substring(nameSeperationPoint + 1);
+
+        this.borrowedBy = null;
+    }
+
+    public void setBorrowedBy(User borrowedBy)
+    {
         this.borrowedBy = borrowedBy;
+    }
+
+    public void returnBook()
+    {
+        borrowedBy = null;
     }
 
     public String getTitle()
@@ -42,7 +63,7 @@ public class Book implements Comparable<Book>
     public String toString()
     {
         return "Book [title=" + title + ", authorFirstName=" + authorFirstName + ", authorLastName=" + authorLastName +
-               ", borrowedBy=" + borrowedBy.toString();
+               ", borrowedBy=" + borrowedBy + "]";
     }
 
     public void printAuthorName(PrintWriter p)

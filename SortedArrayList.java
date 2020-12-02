@@ -17,8 +17,9 @@ public class SortedArrayList<E extends Comparable<E>> extends ArrayList<E> {
                 this.add(i, o);
                 return;
             }
-
         }
+        
+        this.add(this.size(), o);
     }    
 
    
