@@ -1,34 +1,38 @@
+/*
+ * This class extends the ArrayList Java class. 
+ * There is an insert method implemented which adds items to ArrayList whilst preserving an accending order.
+ * 
+ * This project was written as a University project.
+ * 
+ * @author	Elliot Hogg
+ * @version 1.14  (07 Dec 2020)
+ * 
+ */
+
 import java.util.ArrayList;
 
 public class SortedArrayList<E extends Comparable<E>> extends ArrayList<E> {
 
+    //Inserts objects into arrayList whilst preserving accending order
     public void insert(E o)
     {
-        if (this.size() == 0)
+        //if array is empty then insert at index 0
+        if (size() == 0)
         {
-            this.add(o);
+            add(o);
             return;
         }
-    
-        for (int i=0; i<this.size(); i++)
+        //iterate through arrayList
+        for (int i=0; i<size(); i++)
         {
-            if (this.get(i).compareTo(o) >= 0)
+            //if Object being inserted is smaller than current element, add Object at this position
+            if (o.compareTo(get(i)) < 0)
             {
-                this.add(i, o);
+                add(i, o);
                 return;
             }
         }
-        
-        this.add(this.size(), o);
-    }    
-
-   
-
-    public static void main (String[] args) {
-        System.out.println("hello");
-        SortedArrayList<String> help = new SortedArrayList<>();
-        
-        System.out.println(help.toString());
-        
+        //if Object is not smaller than any of existing elements, then add Object at end of array
+        add(o);
     }
 }   

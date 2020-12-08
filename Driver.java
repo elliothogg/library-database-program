@@ -1,41 +1,50 @@
+/*
+ * This is the Driver class for the program, and contains the main method.
+ * 
+ * The terminal program and data retrieval is managed by this class.
+ * 
+ * To run - $ javac Driver.java
+ *          $ java Driver
+ * 
+ * This project was written as a University project.
+ * 
+ * @author	Elliot Hogg
+ * @version 1.14  (07 Dec 2020)
+ * 
+ */
+
 import java.util.Scanner;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.io.File;
 
 public class Driver {
 
+    //Create Scanner Object & PrintWriter reference
     static Scanner sc = new Scanner(System.in);
-
-    static Library cpa = new Library("input.txt");
-    
     static PrintWriter p;
 
+    //Create library object to be used in program using constructor that allows to parse info from .txt file
+    static Library cpa = new Library("input.txt");
+    
+    //assign PrintWriter Object using static block to catch FileNotFound exception
     static
     {
         try
         {
-            p = new PrintWriter("output.txt");
+            File output = new File("output.txt");
+            p = new PrintWriter(output);
         }
-        catch (IOException e)
+        catch (FileNotFoundException e)
         {
             e.printStackTrace();
         }
     }
     
-    
-
-    public static void main(String[] args) throws FileNotFoundException
+    public static void main(String[] args)
     {
         runMainMenu();
-
-        //testing methods
-        // System.out.println(getUserIndex("zoe brown"));
-        // System.out.println(getBookIndex("concurrent programming", "c. r. snow"));
-
-       
-        
     }
 
     public static void printMenuOptions()
@@ -50,11 +59,12 @@ public class Driver {
 
     public static void runMainMenu()
     {
-        boolean programRunning= true;
+        boolean programRunning = true;
         String menuChoice;
         
         printMenuOptions();
         
+        //Do-while loop that runs until programRunning is set to false
         do {
             System.out.print("Please select a menu option (to see the options again press m): ");
             menuChoice = sc.nextLine().toLowerCase();
@@ -68,25 +78,30 @@ public class Driver {
 
                 case "b":
                     System.out.println("\n*********** LIBRARY BOOKS *********\n");
+                    System.out.println(cpa.getNumOfBooksStored());
+                    System.out.println();
                     printArrayList(cpa.getBooks());
                     break;
-                
-                //Passes control to filterMenu
+                    
                 case "u":
                     System.out.println("\n*********** LIBRARY USERS *********\n");
+                    System.out.println(cpa.getNumOfUsersStored());
+                    System.out.println();
                     printArrayList(cpa.getUsers());
                     break;
-                         
-                case "i":
-                    System.out.println("\n*********** ISSUE BOOK *********\n");
-                    issueBook();
-                  
-                    break;
-                
-                case "r":
-                    System.out.println("\n*********** RETURN BOOK *********\n");
-                    returnBook();
                     
+                    case "i":
+                    System.out.println("\n*********** ISSUE BOOK *********\n");
+                    //issue book method is called, which also returns result as a String
+                    System.out.println(cpa.issueBook(getBookTitle(), getAuthorName(), getUserName(), p));
+                    System.out.println();
+                    break;
+                    
+                    case "r":
+                    System.out.println("\n*********** RETURN BOOK *********\n");
+                    //return book method is called, which also returns result as String
+                    System.out.println(cpa.returnBook(getBookTitle(), getAuthorName(), getUserName()));
+                    System.out.println();
                     break;
          
                 case "m":
@@ -106,117 +121,43 @@ public class Driver {
         for (int i = 0; i < arrayList.size(); i++)
         {
             System.out.println(arrayList.get(i));
-            System.out.println(); 
-            System.out.println(); 
+            System.out.println();
         }
     }
 
-    public static int getBookIndex(String title, String author)
+    public static String getUserName()
     {
-        for (int i=0; i<cpa.getBooks().size(); i++)
+        System.out.print("User Full Name: ");
+        String userName = sc.nextLine();
+        if (userName.length() < 1 || !userName.contains(" "))
         {
-            Book book = cpa.getBooks().get(i);
-            if (book.getAuthorFullName().equalsIgnoreCase(author) && book.getTitle().equalsIgnoreCase(title))
-            {
-                return i;
-            }
+            System.out.print("Error - must contain at least 2 words. ");   
+            return getUserName();
         }
-        return -1;
+        else return userName;
     }
 
-    public static int getUserIndex(String name)
+    public static String getAuthorName()
     {
-        for (int i=0; i<cpa.getUsers().size(); i++)
+        System.out.print("Author Full Name: ");
+        String authorName = sc.nextLine();
+        if (authorName.length() < 1 || !authorName.contains(" "))
         {
-            User user = cpa.getUsers().get(i);
-            if (user.getFullName().equalsIgnoreCase(name))
-            {
-                return i;
-            }
+            System.out.print("Error - must contain at least 2 words. ");   
+            return getAuthorName();
         }
-        return -1;
+        else return authorName;
     }
 
-    public static User whoHasBook(Book book)
+    public static String getBookTitle()
     {
-        if (book.getBorrowingUser() == null)
-            return null;
-        else return book.getBorrowingUser();
-    }
-
-    public static void printBookReturnNote(PrintWriter p, String name, String bookTitle)
-    {
-        p.println("Dear " + name);
-        p.println("You currently have " + bookTitle + " on loan. Please can you return it asap.");
-        p.println("All the best,");
-        p.println("The Library");
-        p.flush();
-    }
-
-    public static void issueBook()
-    {
-        System.out.println("Book Title: ");
-        String bookTitle = sc.nextLine();
-        System.out.println("Book Author: ");
-        String bookAuthor = sc.nextLine();
-        System.out.println("Users Name: ");
-        String name = sc.nextLine();
-
-        int bookIndex = getBookIndex(bookTitle, bookAuthor);
-        int userIndex = getUserIndex(name);
-
-        if (bookIndex != -1 && userIndex != -1)
-        {   
-            Book bookBeingQueried = cpa.getBooks().get(bookIndex);
-            User userBeingQueried = cpa.getUsers().get(userIndex);
-            if (whoHasBook(bookBeingQueried) != null)
-            {
-                printBookReturnNote(p, whoHasBook(bookBeingQueried).getFullName(), bookTitle);
-                System.out.println("Book is already loaned out. A message has been sent for them to return it.");
-            }
-            else 
-            {
-                bookBeingQueried.setBorrowedBy(userBeingQueried);
-                userBeingQueried.addBook();
-                System.out.println("Book is available and has been sucessfully loaned out! The system has been updated.");
-            }
+        System.out.print("Book Title: ");
+        String title = sc.nextLine();
+        if (title.length() < 1)
+        {
+            System.out.print("Error - no input. ");
+            return getBookTitle();
         }
-        else System.out.println("Book and/or User not found");
+        else return title;
     }
-
-    public static void returnBook()
-    {
-        System.out.println("Book Title: ");
-        String bookTitle = sc.nextLine();
-        System.out.println("Book Author: ");
-        String bookAuthor = sc.nextLine();
-        System.out.println("Users Name: ");
-        String name = sc.nextLine();
-
-        int bookIndex = getBookIndex(bookTitle, bookAuthor);
-        int userIndex = getUserIndex(name);
-
-        if (bookIndex != -1 && userIndex != -1)
-        {   
-            Book bookBeingQueried = cpa.getBooks().get(bookIndex);
-            User userBeingQueried = cpa.getUsers().get(userIndex);
-
-            if (bookBeingQueried.getBorrowingUser() == null)
-                System.out.println("Error. Book has not been loaned out.");
-
-            else if (!userBeingQueried.equals(bookBeingQueried.getBorrowingUser()))
-            {
-                System.out.println("Book & User found, however this user has not borrowed this book.");
-            }
-            else 
-            {
-                bookBeingQueried.returnBook();
-                userBeingQueried.returnBook();
-                System.out.println("The book was returned successfully");
-            }
-        }
-        else System.out.println("Book and/or User not found");
-    }
-    
-   
 }

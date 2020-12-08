@@ -1,11 +1,20 @@
-import java.io.PrintWriter;
+/*
+ * This class is used to store and retrieve information about library Users.
+ * The class features standard getter and setter methods, and tracks how many books a User is holding. 
+ * maxNumberOfBooks is a static variable and changing it will affect all instances. All data is encapsulated.
+ * 
+ * This project was written as a University project.
+ * 
+ * @author	Elliot Hogg
+ * @version 1.14  (07 Dec 2020)
+ * 
+ */
 
 public class User implements Comparable<User>  
 {
-    
     private String firstName, lastName;
     private int numberOfBooksHeld;
-    private final int maxNumberOfBooks = 3;
+    static int maxNumberOfBooks = 3;
 
     User(String firstName, String lastName) 
     {
@@ -14,8 +23,10 @@ public class User implements Comparable<User>
         this.numberOfBooksHeld = 0;
     }
 
+    //Constructor that parses 1 String into first & last name variables
     User(String fullName) 
     {
+        //Finds space between 2 names and then parses them into individual first/last name variables (assumed only one 1st/lst name)
         int nameSeperationPoint = fullName.indexOf(" ");
         this.firstName = fullName.substring(0, nameSeperationPoint);
         this.lastName = fullName.substring(nameSeperationPoint + 1);
@@ -48,19 +59,14 @@ public class User implements Comparable<User>
         return maxNumberOfBooks;
     }
 
-    public void setFirstName(String firstName)
+    private char initial()
     {
-        this.firstName = firstName;
+        return firstName.charAt(0);
     }
 
-    public void setLastName(String lastName)
+    public String getShortName()
     {
-        this.lastName = lastName;
-    }
-
-    public void setNumberOfBooksHeld(int numberOfBooksHeld)
-    {
-        this.numberOfBooksHeld = numberOfBooksHeld;
+        return initial() + ". " + lastName;
     }
 
     public void addBook()
@@ -72,50 +78,42 @@ public class User implements Comparable<User>
     {
         this.numberOfBooksHeld -= 1;
     }
+    
+    //For potential name changes
+    public void setFirstName(String firstName)
+    {
+        this.firstName = firstName;
+    }
+
+    //For potential name changes - e.g. marriage
+    public void setLastName(String lastName)
+    {
+        this.lastName = lastName;
+    }
+
+    //Incase of human error
+    public void setNumberOfBooksHeld(int numberOfBooksHeld)
+    {
+        this.numberOfBooksHeld = numberOfBooksHeld;
+    }
 
     @Override
-    public String toString() //change
+    public String toString()
     {
-        return "User [firstName=" + firstName + ", lastName=" + lastName + ", numberOfBooksHeld=" + 
-                               numberOfBooksHeld + ", maxNumberOfBooks=" + maxNumberOfBooks + "]";
+        return "User [firstName = " + firstName + ",  lastName = " + lastName + ",  numberOfBooksHeld = " + numberOfBooksHeld + "]";
     }
 
-    public void printFullName(PrintWriter p)
-    {
-        p.println(getFullName());
-    }
-
-    public char initial()
-    {
-        return firstName.charAt(0);
-    }
-
-    public void printShortName(PrintWriter p)
-    {
-        p.print(initial() + ". " + lastName);
-    }
-
-        
+    //Compares first & last names (ignoring cases) to check for equality and prevent duplicates
     public boolean equals(User otherUser)
     {
         return (this.firstName.equalsIgnoreCase(otherUser.firstName) && this.lastName.equalsIgnoreCase(otherUser.lastName));
     }
 
+    //Compares last names to see which is greater, if the same then compares first names. Used to order User objects in array.
     public int compareTo(User u)
     {
-        int lnCmp = lastName.compareTo(u.lastName);
+        int lnCmp = lastName.compareToIgnoreCase(u.lastName);
         if (lnCmp!=0) return lnCmp;
-        else return firstName.compareTo(u.firstName);
+        else return firstName.compareToIgnoreCase(u.firstName);
     }
-
-    public static void main(String[] args)
-    {
-        User test = new User("Elliot Hogg");
-        User test2 = new User("Elliot Hogg");
-        User test3 = new User("Daniel Hogg");
-
-
-        System.out.println(test.equals(test3));
-    }
-
 }
